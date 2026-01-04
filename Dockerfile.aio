@@ -1,20 +1,11 @@
-# MonkeyOCR Multi-Model Docker Image
+# MonkeyOCR All-in-One Docker Image (with Models)
 # Version: 1.0.0
-# 
-# Pre-built image available: neosun/monkeyocr-multimodel:1.0.0
-# 
-# Quick start:
-#   docker pull neosun/monkeyocr-multimodel:1.0.0
-#   docker run --gpus all -p 7860:7860 -p 7870:7870 neosun/monkeyocr-multimodel:1.0.0
-#
-# Or build locally:
-#   docker build -t monkeyocr-multimodel .
-
+# Includes: MonkeyOCR-pro-3B + Qwen3-VL-8B-Instruct + All dependencies
 FROM nvidia/cuda:12.6.3-runtime-ubuntu22.04
 
 LABEL maintainer="neosun100"
 LABEL version="1.0.0"
-LABEL description="MonkeyOCR Multi-Model - Enhanced document parsing with Qwen2.5-VL-3B and Qwen3-VL-8B support"
+LABEL description="MonkeyOCR Multi-Model - All-in-One with embedded models"
 
 # Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -42,7 +33,7 @@ ENV PIP_NO_CACHE_DIR=1
 ARG CUDA_VERSION=126
 RUN pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu${CUDA_VERSION}
 
-# Copy all project files
+# Copy all project files first
 WORKDIR /app/MonkeyOCR
 COPY . .
 

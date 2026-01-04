@@ -1,44 +1,43 @@
-# Git related
+# Git
 .git
 .gitignore
 
-# Python cache and build files
-__pycache__/
-*.py[cod]
+# Python cache
+__pycache__
 *.pyc
 *.pyo
-*.egg-info/
-build/
-dist/
+*.egg-info
+dist
+build
+*.egg
+venv
+.venv
 
-# IDE and editors
-.vscode/
-.idea/
-.history/
+# IDE
+.idea
+.vscode
+*.swp
 
-# System files
-.DS_Store
+# Logs and temp
 *.log
-
-# Temporary files and debugging
+output/
+output_*/
 temp/
 tmp/
 debug/
-cli_debug/
-debug_utils/
 
-# Frontend build files
-projects/web/node_modules/
-projects/web/dist/
-projects/web_demo/web_demo/static/
+# Test files
+test_*.pdf
+test_*.py
+*.ipynb
 
-# Development environment files
-.env
-source.dev.env
-sync1.sh
+# OS files
+.DS_Store
+Thumbs.db
 
-# Documentation build
-_build/
+# Cache directories
+model_weight/.cache
+model_weight/models--*
 
-output/
-model_weight/
+# Large test outputs
+parse_*.txt

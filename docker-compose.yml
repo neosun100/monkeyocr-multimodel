@@ -1,28 +1,66 @@
+version: '3.8'
+
 services:
-  monkeyocr-aio:
-    image: ${DOCKER_IMAGE:-neosun/monkeyocr:latest}
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        LMDEPLOY_PATCHED: "true"
-    container_name: monkeyocr-aio
-    ports:
-      - "${PORT:-7870}:7870"
-    volumes:
-      - ./model_weight:/app/MonkeyOCR/model_weight
-      - ${DATA_DIR:-/tmp/monkeyocr}:/tmp/monkeyocr
+  # All-in-One service (Gradio UI + FastAPI)
+  monkeyocr:
+    image: neosun/monkeyocr-multimodel:1.0.0
+    container_name: monkeyocr-multimodel
+    runtime: nvidia
     environment:
-      - TMPDIR=/tmp/monkeyocr
-      - HF_HUB_CACHE=/app/MonkeyOCR/model_weight
-      - MODELSCOPE_CACHE=/app/MonkeyOCR/model_weight
-      - GPU_IDLE_TIMEOUT=${GPU_IDLE_TIMEOUT:-600}
-      - PORT=7870
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CUDA_VISIBLE_DEVICES=0
+    ports:
+      - "7860:7860"   # Gradio UI
+      - "7870:7870"   # FastAPI
+    volumes:
+      - ./data:/tmp/monkeyocr
+      - ./output:/app/MonkeyOCR/output
+    restart: unless-stopped
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
-              device_ids: ['${GPU_ID:-2}']
+              count: 1
               capabilities: [gpu]
-    restart: unless-stopped
+
+  # Gradio Demo only
+  monkeyocr-demo:
+    image: neosun/monkeyocr-multimodel:1.0.0
+    container_name: monkeyocr-demo
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "7860:7860"
+    volumes:
+      - ./data:/tmp/monkeyocr
+    command: ["demo"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # FastAPI only
+  monkeyocr-api:
+    image: neosun/monkeyocr-multimodel:1.0.0
+    container_name: monkeyocr-api
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "7870:7870"
+    volumes:
+      - ./data:/tmp/monkeyocr
+      - ./output:/app/MonkeyOCR/output
+    command: ["api"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
