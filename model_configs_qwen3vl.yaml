@@ -1,0 +1,14 @@
+device: cuda
+weights:
+  doclayout_yolo: Structure/doclayout_yolo_docstructbench_imgsz1280_2501.pt
+  PP-DocLayout_plus-L: Structure/PP-DocLayout_plus-L
+  layoutreader: Relation
+models_dir: model_weight
+layout_config: 
+  model: doclayout_yolo  # 使用 DocLayout-YOLO
+  reader:
+    name: layoutreader
+chat_config:
+  weight_path: model_weight/Qwen3-VL-8B-Instruct
+  backend: qwen3vl
+  batch_size: 5

@@ -64,7 +64,7 @@ class BatchAnalyzeLLM:
         logger.info('LMM OCR start (done/total text blocks):')
         # Check if split_pages is True and handle pages without valid cids
         if split_pages or len(images) == 1:
-            cid2instruction = [0, 1, 4, 5, 6, 7, 8, 14, 101]
+            cid2instruction = [0, 1, 3, 4, 5, 6, 7, 8, 14, 101]  # 添加3(ImageBody)以支持手写内容识别
             
             pages_to_process_directly = []
             for index in range(len(images)):
@@ -83,7 +83,8 @@ class BatchAnalyzeLLM:
                 for page_idx in pages_to_process_directly:
                     pil_img = Image.fromarray(images[page_idx])
                     direct_images.append(pil_img)
-                    direct_messages.append(f'''Please output the text content from the image.''')
+                    # 增强版提示词，支持手写和古籍内容
+                    direct_messages.append(f'''Please output the text content from the image. If the image contains handwritten text, ancient Chinese characters, calligraphy, or any readable text, please try your best to recognize and transcribe all visible text content.''')
                 
                 # Get direct recognition results
                 direct_results = self.model.chat_model.batch_inference(direct_images, direct_messages)
@@ -142,6 +143,16 @@ class BatchAnalyzeLLM:
                     temp_res['score'] = 1.0
                     temp_res['text'] = ocr
                     ocr_results.append(temp_res)
+                elif res['category_id'] == 3:
+                    # ImageBody - 检查是否识别出了文字
+                    if ocr and ocr.strip() and ocr.strip() != "NO_TEXT_DETECTED":
+                        # 如果识别出文字，转换为文本块
+                        temp_res = copy.deepcopy(res)
+                        temp_res['category_id'] = 15
+                        temp_res['score'] = 1.0
+                        temp_res['text'] = ocr
+                        ocr_results.append(temp_res)
+                    # 如果没有识别出文字，保持原样作为图片
                 elif res['category_id'] == 5:
                     res['score'] = 1.0
                     res['html'] = ocr
@@ -168,13 +179,17 @@ class BatchAnalyzeLLM:
                 output += '</table>'
             return output.strip()
         assert len(images) == len(cat_ids)
-        instruction = f'''Please output the text content from the image.'''
+        # 增强版提示词，针对手写内容和古籍文档
+        instruction = f'''Please output the text content from the image. If the image contains handwritten text, ancient Chinese characters, or calligraphy, please try your best to recognize and transcribe all visible text content.'''
         instruction_mf = f'''Please write out the expression of the formula in the image using LaTeX format.'''
         instruction_table = f'''This is the image of a table. Please output the table in html format.'''
+        # 针对图片区域的特殊提示词（可能包含手写文字）
+        instruction_image = f'''Please carefully examine this image. If it contains any text, handwritten content, calligraphy, ancient Chinese characters, or readable text of any kind, please transcribe all the text you can see. Output the text content directly. If there is truly no text in the image, output "NO_TEXT_DETECTED".'''
         cid2instruction = {
             0: instruction,
             1: instruction,
             # 2: instruction,
+            3: instruction_image,  # ImageBody - 尝试识别图片中的文字
             4: instruction,
             5: instruction_table,
             6: instruction,

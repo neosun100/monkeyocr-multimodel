@@ -1,0 +1,28 @@
+services:
+  monkeyocr-aio:
+    image: ${DOCKER_IMAGE:-neosun/monkeyocr:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        LMDEPLOY_PATCHED: "true"
+    container_name: monkeyocr-aio
+    ports:
+      - "${PORT:-7870}:7870"
+    volumes:
+      - ./model_weight:/app/MonkeyOCR/model_weight
+      - ${DATA_DIR:-/tmp/monkeyocr}:/tmp/monkeyocr
+    environment:
+      - TMPDIR=/tmp/monkeyocr
+      - HF_HUB_CACHE=/app/MonkeyOCR/model_weight
+      - MODELSCOPE_CACHE=/app/MonkeyOCR/model_weight
+      - GPU_IDLE_TIMEOUT=${GPU_IDLE_TIMEOUT:-600}
+      - PORT=7870
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['${GPU_ID:-2}']
+              capabilities: [gpu]
+    restart: unless-stopped

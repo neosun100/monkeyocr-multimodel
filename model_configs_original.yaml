@@ -1,0 +1,14 @@
+device: cuda
+weights:
+  doclayout_yolo: Structure/doclayout_yolo_docstructbench_imgsz1280_2501.pt
+  PP-DocLayout_plus-L: Structure/PP-DocLayout_plus-L
+  layoutreader: Relation
+models_dir: model_weight
+layout_config: 
+  model: doclayout_yolo
+  reader:
+    name: layoutreader
+chat_config:
+  weight_path: model_weight/Recognition
+  backend: transformers
+  batch_size: 5

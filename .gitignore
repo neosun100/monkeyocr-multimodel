@@ -1,55 +1,97 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ===== Virtual Environments =====
+venv*/
+envs/
+.venv/
+ENV/
+env/
+
+# ===== IDE & Editors =====
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.history/
+
+# ===== OS Files =====
+.DS_Store
+Thumbs.db
+*.bak
+
+# ===== Logs =====
+*.log
+slurm_logs/
+
+# ===== Archives =====
 *.tar
 *.tar.gz
 *.zip
-venv*/
-envs/
-slurm_logs/
 
-sync1.sh
-data_preprocess_pj1
-data-preparation1
-__pycache__
-*.log
-*.pyc
-.vscode
-debug/
-*.ipynb
-.idea
-*.egg-info/
-
-# vscode history
-.history
-
-.DS_Store
+# ===== Environment & Secrets =====
 .env
+.env.local
+.env.*.local
+*.pem
+*.key
 
-bad_words/
-bak/
+# ===== Project Specific =====
+# Model weights (large files)
+model_weight/
 
-app/tests/*
+# Output directories
+output/
+output_*/
+
+# Test files
+test_*.pdf
+test_*.py
+
+# Temporary files
 temp/
 tmp/
-tmp
-.vscode
-.vscode/
-ocr_demo
-.coveragerc
-/app/common/__init__.py
-source.dev.env
-
-tmp
-
-projects/web/node_modules
-projects/web/dist
-
-projects/web_demo/web_demo/static/
 cli_debug/
 debug_utils/
+debug/
 
-# sphinx docs
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Coverage
+.coverage
+.coveragerc
+htmlcov/
+
+# Sphinx docs
 _build/
 
-# monkeyocr
-output/
-build/
-model_weight
+# Node.js (for web projects)
+node_modules/
+projects/web/dist/
+projects/web_demo/web_demo/static/
+
+# Other
+bad_words/
+bak/
+app/tests/*
+ocr_demo/
+sync*.sh
+data_preprocess_pj*
+data-preparation*
+source.dev.env
